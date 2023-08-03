@@ -1,0 +1,90 @@
+</html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+
+</head>
+
+<body>
+    <!-- Rest of markup -->
+
+    <div style="display: flex; padding: 0 50px; height: 100vh;">
+        <div style="width: 30%; background-color:antiquewhite;">
+            <ul>
+                <li style="height: 30px;"><a href="">room 1</a></li>
+                <li style="height: 30px;"><a href="">room 2</a></li>
+                <li style="height: 30px;"><a href="">room 3</a></li>
+            </ul>
+        </div>
+        <div style="width: 70%">
+            <div style="padding: 10px 40px;">
+                <div>
+                    <li style="height: 30px;">ok yes </li>
+                    <li style="height: 30px;">ok </li>
+                </div>
+                <div id="typing">
+
+                </div>
+                <div>
+                    <form action="">
+                        <input type="text" id="inputChat">
+                        <input type="submit">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src=" https://cdn.jsdelivr.net/npm/jquery@3.7.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <script>
+        $(function () {
+            const socket = io('http://localhost:3333', {
+            auth: {
+                token: 'Mg.Lm4jJOW_ABDvf8GgIow6Z4einQDUrt_469zYmKbK7muAVufQ8YwRQ9v_dtXH'
+            },
+        })
+        socket.on('loginSuccess', (data) => {
+            console.log(data)
+        })
+        socket.on('loginError', (data) => {
+            console.log(data)
+        })
+
+        const dataJoin = {
+            room: "3"
+        }
+
+        socket.on('connect', () => {
+            // Gửi yêu cầu tham gia vào room sau khi connect thành công
+            socket.emit('joinRoom', dataJoin.room);
+        });
+
+
+        socket.on('joinRoom', (data) => {
+            console.log(data)
+        })
+        socket.on('user:joined', (data) => {
+            console.log(data.message);
+        });
+    socket.on('user:sendMessage', (data) => {
+                    console.log('user:sendMessage', data)
+                })
+
+       socket.on('user:typing', (data) => {
+                       console.log(data.message);
+                       $("#typing").text("typing");
+                   })
+
+            let chat = $('#inputChat').on('keyup', function () {
+                socket.emit('typing', dataJoin.room)
+            });
+        })
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,11 @@
+export const ErrorCode = {
+  0: 'SUCCESS',
+  1000: 'ERROR_SYSTEM',
+
+  10: 'USER_NOT_FOUND',
+  11: 'USER_NOT_ACTIVE',
+
+  30: 'TASK_NOT_FOUND',
+  31: 'TASK_DELETED',
+  32: 'USER_ASSIGN_TO_TASK_NOT_EXIST',
+}
