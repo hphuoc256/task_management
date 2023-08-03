@@ -61,7 +61,7 @@ export default class Booking extends BaseModel {
   @afterPaginate()
   public static async loadRelationsOnPaginate(bookings: Array<Booking>): Promise<void> {
     for (const booking of bookings) {
-      await booking.load('user')
+      /*await booking.load('user')*/
       await booking.load('room')
     }
   }

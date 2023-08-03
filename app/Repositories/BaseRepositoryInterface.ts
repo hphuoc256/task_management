@@ -64,8 +64,9 @@ export default class BaseRepository<Model extends LucidModel> implements IBaseRe
 
     if (scopes) models.withScopes(scopes)
 
-    if (orders) {
-      for (const { column, direction } of orders)
+    let order = orders || [{ column: 'id', direction: 'desc' }]
+    if (order) {
+      for (const { column, direction } of order)
         if (column) models.orderBy(String(column), direction ? direction : 'asc')
     }
 

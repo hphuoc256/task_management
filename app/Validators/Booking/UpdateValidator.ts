@@ -1,9 +1,9 @@
-import { CustomMessages, rules, schema } from '@ioc:Adonis/Core/Validator'
+import { schema, CustomMessages, rules } from '@ioc:Adonis/Core/Validator'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import { BookingRepeat } from 'App/Enums/Booking'
 import { DateTime } from 'luxon'
+import { BookingRepeat, BookingStatus } from 'App/Enums/Booking'
 
-export default class StoreValidator {
+export default class UpdateValidator {
   constructor(protected ctx: HttpContextContract) {
   }
 
@@ -33,6 +33,7 @@ export default class StoreValidator {
     department: schema.string.nullableAndOptional({}, [
       rules.maxLength(100),
     ]),
+    status: schema.enum.nullableAndOptional(Object.values(BookingStatus)),
     repeat: schema.enum.nullableAndOptional(Object.values(BookingRepeat)),
     startAt: schema.date.nullableAndOptional({
       format: 'yyyy-MM-dd HH:mm:ss',
@@ -49,5 +50,16 @@ export default class StoreValidator {
     ),
   })
 
+  /**
+   * Custom messages for validation failures. You can make use of dot notation `(.)`
+   * for targeting nested fields and array expressions `(*)` for targeting all
+   * children of an array. For example:
+   *
+   * {
+   *   'profile.username.required': 'Username is required',
+   *   'scores.*.number': 'Define scores as valid numbers'
+   * }
+   *
+   */
   public messages: CustomMessages = {}
 }

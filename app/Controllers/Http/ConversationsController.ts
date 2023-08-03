@@ -4,6 +4,7 @@ import ConversationService from 'App/Services/ConversationService'
 import { toNumber } from 'lodash'
 import StoreValidator from 'App/Validators/Conversation/StoreValidator'
 import { IConversation } from 'App/Repositories/Conversation/ConversationRepositoryInterface'
+import { ApiResponse } from 'App/Utils/ApiResponse'
 
 @inject()
 export default class ConversationsController {
@@ -20,11 +21,7 @@ export default class ConversationsController {
     }
     const conversations = await this.conversationService.getConversationsByUserId(toNumber(auth.user?.id), filter)
 
-    return response.status(200).json({
-      status: true,
-      message: 'success',
-      data: conversations,
-    })
+    return ApiResponse.success(response, conversations)
   }
 
   public async detail({ request, response, auth }: HttpContextContract) {
@@ -32,11 +29,10 @@ export default class ConversationsController {
 
     const conversation = await this.conversationService.detailConversationByUserId(toNumber(auth.user?.id), conversationId)
 
-    return response.status(200).json({
-      status: true,
-      message: 'success',
-      data: conversation || {},
-    })
+    if (!conversation)
+      return ApiResponse.error(response, 40)
+    return ApiResponse.success(response, conversation)
+
   }
 
   public async store({ request, response, auth }: HttpContextContract) {
@@ -50,9 +46,8 @@ export default class ConversationsController {
 
     const conversation = await this.conversationService.store(params)
 
-    if (!conversation) {
-      return response.status(200).json({ status: false, message: 'failed', error: [] })
-    }
-    return response.status(200).json({ status: true, message: 'success', data: [] })
+    if (!conversation)
+      return ApiResponse.error(response, [], 42)
+    return ApiResponse.success(response, [])
   }
 }

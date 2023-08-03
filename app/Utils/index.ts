@@ -72,9 +72,3 @@ export const sleep = (ms: number) => {
     }, ms || 1000)
   })
 }
-
-export const isEndAtGreaterThanStartAtWithMargin = (startAt , endAt) => {
-  const marginMinutes = 30
-  const diffInMinutes = (endAt - startAt) / (1000 * 60) // Difference in minutes
-  return diffInMinutes >= marginMinutes
-}

@@ -5,3 +5,9 @@ coverage
 .DS_STORE
 .env
 tmp
+
+npm-debug.log
+yarn-error.log
+package-lock.json
+/.idea
+/.vscode
