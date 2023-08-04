@@ -7,6 +7,6 @@ export const rotationRoutes = () => {
     Route.get('/', 'RotationsController.list')
     Route.post('/store', 'RotationsController.store')
 
-  }).prefix('rotation').middleware('auth')
+  }).prefix('rotation').middleware('api')
 
 }

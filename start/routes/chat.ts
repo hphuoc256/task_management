@@ -7,12 +7,12 @@ export const chatRoutes = () => {
     Route.get('/:id', 'ConversationsController.detail')
     Route.post('/store', 'ConversationsController.store')
 
-  }).prefix('conversation').middleware('auth')
+  }).prefix('conversation').middleware('api')
 
   Route.group(() => {
     Route.get('/', 'MessagesController.index')
     Route.post('/send', 'MessagesController.store')
 
-  }).prefix('message').middleware('auth')
+  }).prefix('message').middleware('api')
 
 }

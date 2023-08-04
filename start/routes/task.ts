@@ -8,5 +8,5 @@ export const taskRoutes = () => {
     Route.post('/store', 'TasksController.store')
     Route.post('/update/:id', 'TasksController.update')
 
-  }).prefix('task').middleware('auth')
+  }).prefix('task').middleware('api')
 }

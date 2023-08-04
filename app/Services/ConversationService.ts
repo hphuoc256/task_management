@@ -22,7 +22,8 @@ export default class ConversationService {
 
   public async store(params: IConversation.DTO.ConversationStore): Promise<boolean> {
     if (params.type === ConversationType.PRIVATE) {
-      const conversationExist = await this.checkIfConversationExistsBetweenTwoUsers(params.participants, params.userId)
+      const userParticipants = first(params.participants)
+      const conversationExist = await this.checkIfConversationExistsBetweenTwoUsers(userParticipants, params.userId)
       if (conversationExist) return false
 
       const dataPrivate = {

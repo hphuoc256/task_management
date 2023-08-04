@@ -2,6 +2,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import UserService from 'App/Services/UserService'
 import { inject } from '@adonisjs/fold'
 import LoginValidator from 'App/Validators/Auth/LoginValidator'
+import { ApiResponse } from 'App/Utils/ApiResponse'
 
 @inject()
 export default class AuthController {
@@ -12,9 +13,9 @@ export default class AuthController {
   }
 
   public async login({ request, response, auth }: HttpContextContract) {
-    const { email, password } = await request.validate(LoginValidator)
-
     try {
+      const { email, password } = await request.validate(LoginValidator)
+
       const user = await this.userService.getByEmail(email)
 
       const token = await auth.use('api').attempt(email, password, {
@@ -30,19 +31,16 @@ export default class AuthController {
         },
       }
 
-      return response.status(200).json(result)
-    } catch {
-      return response.unauthorized('Invalid credentials')
+      return ApiResponse.success(response, result)
+
+    } catch (error) {
+      return ApiResponse.error(response, error?.messages?.errors || [], 422)
     }
   }
 
   public async logout({ response, auth }: HttpContextContract) {
     await auth.use('api').revoke()
-    return response.status(200).json({
-      status: true,
-      message: 'success',
-      data: {},
-    })
+    return ApiResponse.success(response, [])
   }
 
 }

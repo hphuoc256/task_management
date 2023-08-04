@@ -36,18 +36,23 @@ export default class ConversationsController {
   }
 
   public async store({ request, response, auth }: HttpContextContract) {
-    const { participants, type, name } = await request.validate(StoreValidator)
+    try {
+      const { participants, type, name } = await request.validate(StoreValidator)
 
-    const params: IConversation.DTO.ConversationStore = {
-      participants, type,
-      name: name || null,
-      userId: toNumber(auth.user?.id),
+      const params: IConversation.DTO.ConversationStore = {
+        participants, type,
+        name: name || null,
+        userId: toNumber(auth.user?.id),
+      }
+
+      const conversation = await this.conversationService.store(params)
+
+      if (!conversation)
+        return ApiResponse.error(response, [], 42)
+      return ApiResponse.success(response, [])
+    } catch (e) {
+      console.log(e)
+      return ApiResponse.error(response, e?.messages?.errors || [], 422)
     }
-
-    const conversation = await this.conversationService.store(params)
-
-    if (!conversation)
-      return ApiResponse.error(response, [], 42)
-    return ApiResponse.success(response, [])
   }
 }

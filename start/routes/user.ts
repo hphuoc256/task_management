@@ -7,5 +7,5 @@ export const userRoutes = () => {
     Route.get('/:id', 'UsersController.detail')
 
   }).prefix('user')
-    .middleware('auth')
+    .middleware('api')
 }

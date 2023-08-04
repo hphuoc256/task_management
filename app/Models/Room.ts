@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, column, HasMany, hasMany, scope } from '@ioc:Adonis/Lucid/Orm'
 import Booking from 'App/Models/Booking'
 
 export default class Room extends BaseModel {
@@ -33,4 +33,20 @@ export default class Room extends BaseModel {
     localKey: 'id',
   })
   public bookings: HasMany<typeof Booking>
+
+  /**
+   * ------------------------------------------------------
+   * Query Scopes
+   * ------------------------------------------------------
+   */
+  public static searchQueryScope = scope((query, search) => {
+    const fields = ['name', 'code', 'description']
+    let sql = ''
+
+    fields.forEach(
+      (field, i) => (sql = `${sql} ${i !== 0 ? ' or ' : ' '} ${field} like '%${search}%'`),
+    )
+
+    return query.whereRaw(`(${sql})`)
+  })
 }
