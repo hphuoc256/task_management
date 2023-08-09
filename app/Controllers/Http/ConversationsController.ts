@@ -19,7 +19,7 @@ export default class ConversationsController {
       page: toNumber(query?.page || 1),
       limit: toNumber(query?.limit || 10),
     }
-    const conversations = await this.conversationService.getConversationsByUserId(toNumber(auth.user?.id), filter)
+    const conversations = await this.conversationService.getByUserId(toNumber(auth.user?.id), filter)
 
     return ApiResponse.success(response, conversations)
   }

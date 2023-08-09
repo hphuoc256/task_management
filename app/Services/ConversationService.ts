@@ -12,18 +12,18 @@ export default class ConversationService {
   ) {
   }
 
-  public async getConversationsByUserId(userId: number, query) {
-    return this.repo.getConversationsByUserId(userId, query)
+  public async getByUserId(userId: number, query) {
+    return this.repo.getManyByUserId(userId, query)
   }
 
   public async detailConversationByUserId(userId: number, conversationId: number): Promise<Conversation | null> {
-    return await this.repo.detailConversationByUserId(userId, conversationId)
+    return await this.repo.getOneByUserId(userId, conversationId)
   }
 
   public async store(params: IConversation.DTO.ConversationStore): Promise<boolean> {
     if (params.type === ConversationType.PRIVATE) {
       const userParticipants = first(params.participants)
-      const conversationExist = await this.checkIfConversationExistsBetweenTwoUsers(userParticipants, params.userId)
+      const conversationExist = await this.getBetweenTwoUsers(userParticipants, params.userId)
       if (conversationExist) return false
 
       const dataPrivate = {
@@ -51,8 +51,8 @@ export default class ConversationService {
     return !!conversation
   }
 
-  public async checkIfConversationExistsBetweenTwoUsers(user1Id, user2Id): Promise<boolean> {
-    return await this.repo.checkIfConversationExistsBetweenTwoUsers(user1Id, user2Id)
+  public async getBetweenTwoUsers(user1Id, user2Id): Promise<boolean> {
+    return await this.repo.getBetweenTwoUsers(user1Id, user2Id)
   }
 
 }

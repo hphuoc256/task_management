@@ -3,6 +3,7 @@ import { LucidRow, ModelPaginatorContract } from '@ioc:Adonis/Lucid/Orm'
 import { ConversationType } from 'App/Enums/Conversation'
 import BaseRepository from 'App/Repositories/BaseRepositoryInterface'
 import { IConversation } from 'App/Repositories/Conversation/ConversationRepositoryInterface'
+import Database from '@ioc:Adonis/Lucid/Database'
 
 export default class ConversationRepository
   extends BaseRepository<typeof Conversation>
@@ -19,7 +20,7 @@ export default class ConversationRepository
     return await Conversation.findBy('email', email)
   }
 
-  public async getConversationsByUserId(userId: number, filter: IConversation.DTO.List): Promise<ModelPaginatorContract<LucidRow>> {
+  public async getManyByUserId(userId: number, filter: IConversation.DTO.List): Promise<ModelPaginatorContract<LucidRow>> {
     const conversations = Conversation.query()
       .select('conversations.*', 'messages.created_at as last_message_time')
       .preload('userCreate', (builder) => {
@@ -38,7 +39,7 @@ export default class ConversationRepository
     return await conversations.paginate(filter.page, filter.limit)
   }
 
-  public async detailConversationByUserId(userId: number, conversationId: number): Promise<Conversation | null> {
+  public async getOneByUserId(userId: number, conversationId: number): Promise<Conversation | null> {
     const conversation = Conversation.query()
       .where('id', conversationId)
       .whereHas('participants', (builder) => {
@@ -61,25 +62,24 @@ export default class ConversationRepository
   }
 
   public async storeTypeGroup(params: IConversation.DTO.ConversationStore): Promise<Conversation> {
-    const { type, userId, participants } = params
-    const conversation = await Conversation.create({ type, userId })
+    const { type, userId, participants, name } = params
+    const conversation = await Conversation.create({ type, userId, name })
     conversation.related('participants').attach([userId, ...participants])
 
     return conversation
   }
 
-  public async checkIfConversationExistsBetweenTwoUsers(user1Id, user2Id): Promise<boolean> {
-    const conversationExist = await Conversation.query()
-      .where('type', ConversationType.PRIVATE)
-      .whereHas('participants', (builder) => {
-        builder.whereIn('id', [user1Id, user2Id])
-          .havingRaw('COUNT(DISTINCT id) = 2')
-      })
-      .preload('participants', (builder) => {
-        builder.select('username')
-      })
+  public async getBetweenTwoUsers(user1Id, user2Id): Promise<boolean> {
+    const conversation = await Database
+      .from('conversation_user')
+      .select('conversation_id')
+      .join('conversations', 'conversation_user.conversation_id', 'conversations.id')
+      .whereIn('conversation_user.user_id', [user1Id, user2Id])
+      .where('conversations.type', ConversationType.PRIVATE)
+      .groupBy('conversation_id')
+      .havingRaw('COUNT(DISTINCT conversation_user.user_id) = 2')
       .first()
 
-    return !!conversationExist
+    return !!conversation
   }
 }

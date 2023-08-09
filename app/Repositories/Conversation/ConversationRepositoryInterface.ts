@@ -8,15 +8,15 @@ export namespace IConversation {
 
     getByEmail(email: string): Promise<Conversation | null>
 
-    getConversationsByUserId(userId: number, params: DTO.List): Promise<ModelPaginatorContract<LucidRow>>
+    getManyByUserId(userId: number, params: DTO.List): Promise<ModelPaginatorContract<LucidRow>>
 
-    detailConversationByUserId(userId: number, conversationId: number): Promise<Conversation | null>
+    getOneByUserId(userId: number, conversationId: number): Promise<Conversation | null>
 
     storeTypePrivate(params: DTO.ConversationPrivateStore): Promise<Conversation>
 
     storeTypeGroup(params: DTO.ConversationStore): Promise<Conversation>
 
-    checkIfConversationExistsBetweenTwoUsers(user1Id, user2Id): Promise<boolean>
+    getBetweenTwoUsers(user1Id, user2Id): Promise<boolean>
   }
 
   export namespace DTO {
@@ -34,7 +34,7 @@ export namespace IConversation {
     }
 
     export type ConversationStore = {
-      name: string | null
+      name?: string
       type: string
       participants: number[]
       userId: number
