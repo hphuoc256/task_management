@@ -49,6 +49,7 @@ export default class BookingsController {
       if (!booking) return ApiResponse.error(response, [], 52)
       return ApiResponse.success(response, booking)
     } catch (error) {
+      console.log(error)
       return ApiResponse.error(response, error?.messages?.errors || [], 422)
     }
   }

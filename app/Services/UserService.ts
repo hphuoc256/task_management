@@ -3,6 +3,7 @@ import User from 'App/Models/User'
 import { IUser } from 'App/Repositories/User/UserRepositoryInterface'
 import UserRepository from 'App/Repositories/User/UserRepository'
 import { PaginateContractType } from 'App/Repositories/BaseInterface'
+import { toNumber } from 'lodash'
 
 @inject()
 export default class UserService {
@@ -25,5 +26,31 @@ export default class UserService {
 
   public async getByEmail(email: string): Promise<User | null> {
     return await this.repo.findBy('email', email)
+  }
+
+  public async getHistoryById(id, request): Promise<any> {
+    const limit = (request.input('limit') && toNumber(request.input('limit')) > 0) ? toNumber(request.input('limit')) : 10
+    const page = (request.input('page') && toNumber(request.input('page')) > 0) ? toNumber(request.input('page')) : 1
+    const offset = limit * (page - 1)
+    const paginate = {
+      limit,
+      offset,
+      page,
+    }
+
+    return await this.repo.historyRotationById(id, paginate)
+  }
+
+  public async update(id, data: any) {
+    const user = await this.repo.findBy('id', id)
+    if (user) {
+      user.username = data.username
+      await user.save()
+    }
+    return user?.toJSON()
+  }
+
+  public async create(data): Promise<User | null> {
+    return this.repo.store(data)
   }
 }

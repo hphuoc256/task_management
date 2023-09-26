@@ -11,5 +11,17 @@ export namespace IRotation {
       userId: number
       rotationId: number
     }
+
+    export type Store = {
+      name: string
+      value: string
+      rate: number
+    }
+
+    export type Update = {
+      name: string
+      value: string
+      rate: number
+    }
   }
 }

@@ -4,6 +4,7 @@ import Rotation from 'App/Models/Rotation'
 import { add, toNumber } from 'lodash'
 import UserRepository from 'App/Repositories/User/UserRepository'
 import { IUser } from 'App/Repositories/User/UserRepositoryInterface'
+import { IRotation } from 'App/Repositories/Rotation/RotationRepositoryInterface'
 
 @inject()
 export default class RotationService {
@@ -17,7 +18,7 @@ export default class RotationService {
     return await this.repo.getList()
   }
 
-  public async store(userId: number) {
+  public async make(userId: number) {
     const rotations = await this.repo.getList()
     if (!rotations) return []
 
@@ -41,7 +42,7 @@ export default class RotationService {
     return randomRotation
   }
 
-  public randomRotationWithRate(rotations) {
+  protected randomRotationWithRate(rotations) {
     // sum probabilities
     const totalRate = rotations.reduce((acc, obj) => acc + obj.rate, 0)
 
@@ -65,5 +66,34 @@ export default class RotationService {
 
     // if error return last item
     return rotations[rotations.length - 1]
+  }
+
+  public async store(params: IRotation.DTO.Store): Promise<Rotation> {
+    return await this.repo.store(params)
+  }
+
+  public async update(id, params: IRotation.DTO.Update): Promise<Rotation | number> {
+    const rotation = await this.repo.findBy('id', id)
+    if (!rotation) return 70
+
+    try {
+      rotation.merge(params)
+      await this.repo.save(rotation)
+      return rotation
+    } catch (e) {
+      return 73
+    }
+  }
+
+  public async findById(id): Promise<Rotation | null> {
+    return await this.repo.findBy('id', id)
+  }
+
+  public async delete(id: number): Promise<boolean> {
+    const rotation = await this.repo.findBy('id', id)
+    if (!rotation) return false
+
+    await rotation.delete()
+    return true
   }
 }

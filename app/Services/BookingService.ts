@@ -22,12 +22,17 @@ export default class BookingService {
     return await this.repo.findBy('id', id)
   }
 
-  public async store(params: IBooking.DTO.Store): Promise<Booking> {
+  public async store(params: IBooking.DTO.Store): Promise<Booking | null> {
     if (params.startAt) {
       params.startAt = params.startAt.toFormat('yyyy-MM-dd HH:mm:ss') as any
     }
     if (params.endAt) {
       params.endAt = params.endAt.toFormat('yyyy-MM-dd HH:mm:ss') as any
+    }
+
+    if (params.startAt && params.endAt) {
+      const checkExistBooking = await this.checkExistBooking(params.startAt, params.endAt)
+      if (checkExistBooking) return null
     }
     return await this.repo.store(params)
   }
@@ -51,7 +56,12 @@ export default class BookingService {
     return 0
   }
 
-  public async bookingsInMonth({month, year}) {
-    return await this.repo.bookingsInMonth({month, year})
+  public async bookingsInMonth({ month, year }) {
+    return await this.repo.bookingsInMonth({ month, year })
+  }
+
+  protected async checkExistBooking(startAt, endAt): Promise<boolean> {
+    console.log(startAt, endAt)
+    return true
   }
 }

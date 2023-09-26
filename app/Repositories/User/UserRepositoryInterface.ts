@@ -4,6 +4,8 @@ import User from 'App/Models/User'
 export namespace IUser {
   export interface Repository extends BaseInterface<typeof User> {
     updatePoint(params: DTO.UpdatePoint): Promise<User | null>
+
+    historyRotationById(id, paginate: DTO.PaginateQueryRotation): Promise<any>
   }
 
   export namespace DTO {
@@ -17,6 +19,12 @@ export namespace IUser {
       userId: number
       rotationId: number,
       point: number
+    }
+
+    export type PaginateQueryRotation = {
+      offset: number,
+      limit: number,
+      page: number
     }
   }
 }

@@ -15,6 +15,9 @@ export default class Rotation extends BaseModel {
   @column()
   public rate: number
 
+  @column()
+  public color: string
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

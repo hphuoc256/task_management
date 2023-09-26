@@ -36,7 +36,9 @@ export default class StoreValidator {
     repeat: schema.enum.nullableAndOptional(Object.values(BookingRepeat)),
     startAt: schema.date.nullableAndOptional({
       format: 'yyyy-MM-dd HH:mm:ss',
-    }),
+    },[
+      rules.afterOrEqual('today'),
+    ]),
     endAt: schema.date.nullableAndOptional(
       {
         format: 'yyyy-MM-dd HH:mm:ss',
