@@ -14,14 +14,18 @@ export default class ConversationsController {
   }
 
   public async index({ response, request, auth }: HttpContextContract) {
-    let query = request.only(['limit', 'page'])
-    const filter: IConversation.DTO.List = {
-      page: toNumber(query?.page || 1),
-      limit: toNumber(query?.limit || 10),
-    }
-    const conversations = await this.conversationService.getByUserId(toNumber(auth.user?.id), filter)
+    try {
+      let query = request.only(['limit', 'page'])
+      const filter: IConversation.DTO.List = {
+        page: toNumber(query?.page || 1),
+        limit: toNumber(query?.limit || 10),
+      }
+      const conversations = await this.conversationService.getByUserId(toNumber(auth.user?.id), filter)
 
-    return ApiResponse.success(response, conversations)
+      return ApiResponse.success(response, conversations)
+    } catch (e) {
+      return ApiResponse.error(response, [])
+    }
   }
 
   public async detail({ request, response, auth }: HttpContextContract) {

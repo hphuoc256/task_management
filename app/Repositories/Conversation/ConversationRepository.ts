@@ -22,7 +22,7 @@ export default class ConversationRepository
 
   public async getManyByUserId(userId: number, filter: IConversation.DTO.List): Promise<ModelPaginatorContract<LucidRow>> {
     const conversations = Conversation.query()
-      .select('conversations.*', 'messages.created_at as last_message_time')
+      .select('conversations.*',)
       .preload('userCreate', (builder) => {
         builder.select('username')
       })
@@ -32,9 +32,8 @@ export default class ConversationRepository
       .whereHas('participants', (builder) => {
         builder.where('id', userId)
       })
-      .leftJoin('messages', 'conversations.id', 'messages.conversation_id')
-      .groupBy('conversations.id')
-      .orderBy('last_message_time', 'desc')
+      .distinct()
+      .orderBy('updated_at', 'desc')
 
     return await conversations.paginate(filter.page, filter.limit)
   }

@@ -2,7 +2,8 @@ import { schema, CustomMessages, rules } from '@ioc:Adonis/Core/Validator'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 export default class RegisterValidator {
-  constructor(protected ctx: HttpContextContract) {}
+  constructor(protected ctx: HttpContextContract) {
+  }
 
   public schema = schema.create({
     username: schema.string({ trim: true }, [
@@ -18,9 +19,13 @@ export default class RegisterValidator {
       rules.required(),
       rules.minLength(6),
       rules.maxLength(100),
-      rules.confirmed('passwordConfirmation')
+      rules.confirmed('passwordConfirmation'),
     ]),
   })
 
-  public messages: CustomMessages = {}
+  public messages: CustomMessages = {
+    // required: 'The {{ field }} is required to create a new account',
+    // email: 'The {{ field }} must be a valid email address',
+    // unique: '{{ field }} has already been taken',
+  }
 }

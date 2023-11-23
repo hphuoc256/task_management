@@ -14,6 +14,7 @@ export default class StoreValidator {
     description: schema.string.optional(),
     dueDate: schema.date.optional(),
     status: schema.enum.optional(Object.values(TaskStatus)),
+    assignId: schema.number.optional(),
   })
 
   public messages: CustomMessages = {}
